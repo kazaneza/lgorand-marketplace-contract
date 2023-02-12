@@ -1,7 +1,6 @@
 from pyteal import *
 
 
-
 class Product:
     class Variables:
         name = Bytes("NAME")
@@ -25,6 +24,7 @@ class Product:
             App.globalPut(self.Variables.sold, Int(0)),
             Approve()
         ])
+
     def buy(self):
         count = Txn.application_args[1]
         valid_number_of_transactions = Global.group_size() == Int(2)
@@ -47,8 +47,7 @@ class Product:
         return If(can_buy).Then(update_state).Else(Reject())
 
     def application_deletion(self):
-    return Return(Txn.sender() == Global.creator_address())
-
+        return Return(Txn.sender() == Global.creator_address())
 
     def application_start(self):
         return Cond(
@@ -56,7 +55,7 @@ class Product:
             [Txn.on_completion() == OnComplete.DeleteApplication, self.application_deletion()],
             [Txn.application_args[0] == self.AppMethods.buy, self.buy()]
         )
-    
+
     def approval_program(self):
         return self.application_start()
 
