@@ -48,4 +48,17 @@ class Product:
 
     def application_deletion(self):
     return Return(Txn.sender() == Global.creator_address())
-        
+
+
+    def application_start(self):
+        return Cond(
+            [Txn.application_id() == Int(0), self.application_creation()],
+            [Txn.on_completion() == OnComplete.DeleteApplication, self.application_deletion()],
+            [Txn.application_args[0] == self.AppMethods.buy, self.buy()]
+        )
+    
+    def approval_program(self):
+        return self.application_start()
+
+    def clear_program(self):
+        return Return(Int(1))
