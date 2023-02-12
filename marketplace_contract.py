@@ -45,4 +45,7 @@ class Product:
         ])
 
         return If(can_buy).Then(update_state).Else(Reject())
+
+    def application_deletion(self):
+    return Return(Txn.sender() == Global.creator_address())
         
